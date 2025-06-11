@@ -43,32 +43,43 @@
 <body>
     <h1>TFC Anvil helper</h1>
     <div style="display: flex; align-items: flex-start;">
-        <form id="smithing-form" autocomplete="off">
-            <label>
-                Predefined Rule:
-                <select id="predefined-rule">
+        <div>
+            <label style="background: #e0ffff; border: 1px solid #b0b0b0; padding: 0.5em;">
+                Saved Presets:
+                <select id="saved-presets">
                     <option value="">-- None --</option>
                 </select>
+                <input type="text" id="preset-name" placeholder="Preset name" style="width: 10em;">
+                <button type="button" id="save-preset-btn">Save</button>
             </label>
-            <div style="margin-bottom: 1em">
+            <form id="smithing-form" autocomplete="off"
+                style="background: #f0ffff; border: 1px solid #b0b0b0; padding: 0.5em;">
                 <label>
-                    Rule 1:
-                    <select class="rule-select"></select>
+                    Predefined Rule:
+                    <select id="predefined-rule">
+                        <option value="">-- None --</option>
+                    </select>
                 </label>
+                <div style="margin-bottom: 1em">
+                    <label>
+                        Rule 1:
+                        <select class="rule-select"></select>
+                    </label>
+                    <label>
+                        Rule 2:
+                        <select class="rule-select"></select>
+                    </label>
+                    <label>
+                        Rule 3:
+                        <select class="rule-select"></select>
+                    </label>
+                </div>
                 <label>
-                    Rule 2:
-                    <select class="rule-select"></select>
+                    Goal:
+                    <input type="number" id="goal" min="0" max="160" value="0">
                 </label>
-                <label>
-                    Rule 3:
-                    <select class="rule-select"></select>
-                </label>
-            </div>
-            <label>
-                Goal:
-                <input type="number" id="goal" min="0" max="160" value="0">
-            </label>
-        </form>
+            </form>
+        </div>
         <div style="margin-left: 20em">
             <div style="display: flex;flex-direction:column;gap:10px;">
                 <div style="display:flex;align-items:flex-end;">
@@ -241,6 +252,8 @@
             return [];
         }
 
+
+
         function scoreRepetition(solution) {
             let last = null;
             let changes = 0;
@@ -262,7 +275,7 @@
                 if (newGoal < 0) continue;
 
                 for (let partial of findOptimalUnconstrained(newGoal)) {
-                    const full = [...partial, ...final];
+                    const full = [...partial.filter(step => step !== final[0]), ...partial.filter(step => step === final[0]), ...final];
                     solutions.push(full);
                 }
             }
@@ -278,39 +291,43 @@
 
     <script>
         // UI
-        function fillRuleSelect(sel, val) {
-            sel.innerHTML = "";
-            const emptyOpt = document.createElement("option");
-            emptyOpt.value = "";
-            emptyOpt.textContent = "Any";
-            if (!val) emptyOpt.selected = true;
-            sel.appendChild(emptyOpt);
-            REQUIREMENTS.forEach(opt => {
-                const o = document.createElement("option");
-                o.value = opt;
-                o.textContent = opt.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());;
-                if (opt === val) o.selected = true;
-                sel.appendChild(o);
-            });
-        }
 
-        const predefined = document.getElementById("predefined-rule");
+        const predefinedElement = document.getElementById("predefined-rule");
         Object.keys(SMITHING_PRESETS).forEach(key => {
             const o = document.createElement("option");
             o.value = key;
-            o.textContent = key.replace(/_/g, " ");
-            predefined.appendChild(o);
+            o.textContent = key.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());;
+            predefinedElement.appendChild(o);
         });
 
         const ruleElements = Array.from(document.getElementsByClassName('rule-select'));
-        ruleElements.forEach(rule => fillRuleSelect(rule))
+        ruleElements.forEach(rule => {
+            rule.innerHTML = "";
+            const emptyOpt = document.createElement("option");
+            emptyOpt.value = "";
+            emptyOpt.textContent = "Any";
+            emptyOpt.selected = true;
+            rule.appendChild(emptyOpt);
+            REQUIREMENTS.forEach(opt => {
+                const o = document.createElement("option");
+                o.value = opt;
+                o.textContent = opt.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                rule.appendChild(o);
+            });
+        })
 
-        predefined.addEventListener("change", () => {
-            const val = predefined.value;
+        predefinedElement.addEventListener("change", () => {
+            const val = predefinedElement.value;
             if (val && SMITHING_PRESETS[val]) {
                 ruleElements.forEach((sel, i) => {
                     Array.from(sel.options).forEach(opt => {
                         opt.selected = (opt.value === (SMITHING_PRESETS[val][i] || ""));
+                    });
+                });
+            } else {
+                ruleElements.forEach(sel => {
+                    Array.from(sel.options).forEach(opt => {
+                        opt.selected = (opt.value === "");
                     });
                 });
             }
@@ -320,9 +337,63 @@
         [...ruleElements, document.getElementById("goal")].forEach(el => el.addEventListener("change", updateResult));
         document.getElementById("smithing-form").addEventListener("submit", e => e.preventDefault());
 
+        const savedPresetsElement = document.getElementById("saved-presets");
+
+        function refreshSavedPresetsSelector() {
+            savedPresetsElement.innerHTML = `<option value="">-- None --</option>`;
+            (JSON.parse(localStorage.getItem("presets")) || []).forEach((preset, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.textContent = preset.name;
+                savedPresetsElement.appendChild(opt);
+            });
+        }
+
+        document.getElementById("save-preset-btn").addEventListener("click", () => {
+            const presets = JSON.parse(localStorage.getItem("presets")) || [];
+
+            const presetNameInput = document.getElementById("preset-name").value.trim();
+            if (presetNameInput || !savedPresetsElement.value) {
+                presets.push({
+                    rules: ruleElements.map(rule => rule.value).filter(Boolean),
+                    goal: parseInt(document.getElementById("goal").value),
+                    name: presetNameInput || `Preset ${Date.now()}`,
+                });
+            } else {
+                const idx = parseInt(savedPresetsElement.value);
+                presets[idx].rules = ruleElements.map(rule => rule.value).filter(Boolean);
+                presets[idx].goal = parseInt(document.getElementById("goal").value);
+            }
+            localStorage.setItem("presets", JSON.stringify(presets));
+
+            refreshSavedPresetsSelector();
+            savedPresetsElement.value = (presets.length - 1).toString();
+            document.getElementById("preset-name").value = "";
+        });
+
+        savedPresetsElement.addEventListener("change", () => {
+            const idx = savedPresetsElement.value;
+            if (!idx) return;
+
+            const presets = JSON.parse(localStorage.getItem("presets")) || [];
+            const preset = presets[parseInt(idx)];
+            if (!preset) return;
+
+            ruleElements.forEach((sel, i) => {
+                Array.from(sel.options).forEach(opt => {
+                    opt.selected = (opt.value === (preset.rules[i] || ""));
+                });
+            });
+
+            document.getElementById("goal").value = preset.goal;
+            updateResult();
+        });
+
+        refreshSavedPresetsSelector();
+
         function updateResult() {
             const rules = ruleElements.map(ruleElements => ruleElements.value).filter(Boolean);
-            const goal = parseInt(document.getElementById("goal").value, 10) || 0;
+            const goal = parseInt(document.getElementById("goal").value);
             const resultDiv = document.getElementById("result");
             resultDiv.innerHTML = "<em>Calculating...</em>";
             setTimeout(() => {
