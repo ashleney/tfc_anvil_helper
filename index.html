@@ -3,129 +3,118 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>TFC Anvil helper</title>
+    <title>TFC Anvil Helper</title>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
+        .selector-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        label {
-            display: block;
-            margin-top: 1em;
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(2, 100px);
+            background: #fff;
         }
 
-        .result {
-            margin-top: 2em;
+        .selector-item {
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .solution {
-            background: #f5f5f5;
-            padding: 0.5em;
-            margin-bottom: 0.5em;
-            border-radius: 4px;
+        .selector-item.selected {
+            border: 2px solid #0078d7;
+            background: #e6f0fa;
         }
 
-        .smithing-step {
-            text-align: center;
-            width: 90px;
+        .selector-item img {
+            width: 60px;
+            filter: grayscale(80%);
         }
 
-        .smithing-step-img {
-            height: 76px;
-            width: 76px;
-            display: block;
-            margin: 0 auto;
+        .selector-item.selected img {
+            filter: none;
+        }
+
+        .selector-label {
+            font-size: 18px;
+            user-select: none;
+        }
+
+        .row-selectors {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 300px;
+            align-items: stretch;
+        }
+
+        .row-selector {
+            height: 25px;
+            border-radius: 6px;
+            background: #ccc;
+            cursor: pointer;
+        }
+
+        .row-selector.selected {
+            background: orange;
         }
     </style>
 </head>
 
-<body>
+<body style="font-family: sans-serif; background: #f5f5f5; margin: 2em;">
     <h1>TFC Anvil helper</h1>
-    <div style="display: flex; align-items: flex-start;">
+    <div style="display: flex; flex-direction: column; gap: 12px">
         <div>
-            <label style="background: #e0ffff; border: 1px solid #b0b0b0; padding: 0.5em;">
-                Saved Presets:
-                <select id="saved-presets">
-                    <option value="">-- None --</option>
-                </select>
-                <input type="text" id="preset-name" placeholder="Preset name" style="width: 10em;">
-                <button type="button" id="save-preset-btn">Save</button>
-            </label>
-            <form id="smithing-form" autocomplete="off"
-                style="background: #f0ffff; border: 1px solid #b0b0b0; padding: 0.5em;">
-                <label>
-                    Predefined Rule:
-                    <select id="predefined-rule">
-                        <option value="">-- None --</option>
-                    </select>
-                </label>
-                <div style="margin-bottom: 1em">
-                    <label>
-                        Rule 1:
-                        <select class="rule-select"></select>
-                    </label>
-                    <label>
-                        Rule 2:
-                        <select class="rule-select"></select>
-                    </label>
-                    <label>
-                        Rule 3:
-                        <select class="rule-select"></select>
-                    </label>
-                </div>
-                <label>
-                    Goal:
-                    <input type="number" id="goal" min="0" max="160" value="0">
-                </label>
-            </form>
+            Saved Presets:
+            <select id="saved-presets">
+                <option></option>
+            </select>
+            <input type="text" id="preset-name" placeholder="Preset name" style="width: 10em;">
+            <button type="button" id="save-preset-btn">Save</button>
+            <button type="button" id="delete-preset-btn">Delete</button>
         </div>
-        <div style="margin-left: 20em">
-            <div style="display: flex;flex-direction:column;gap:10px;">
-                <div style="display:flex;align-items:flex-end;">
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/HIT_LIGHT.png" alt="Light Hit">
-                        <span>Light Hit</span>
-                    </div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/HIT_MEDIUM.png" alt="Medium Hit">
-                        <span>Medium Hit</span>
-                    </div>
-                    <div style="width: 40px;"></div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/PUNCH.png" alt="Punch">
-                        <span>Punch</span>
-                    </div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/BEND.png" alt="Bend">
-                        <span>Bend</span>
-                    </div>
+        <label>
+            Predefined Rule:
+            <select id="predefined-rule-modpack">
+                <option value="TFC">TFC</option>
+                <option value="TFG">TFG</option>
+            </select>
+            <select id="predefined-rule">
+                <option></option>
+            </select>
+        </label>
+        <div>
+            <div style="display: flex; gap: 32px;">
+                <div class="selector-container">
+                    <div class="selector-grid"></div>
+                    <div class="row-selectors"></div>
                 </div>
-                <div style="display:flex;align-items:flex-end;">
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/HIT_HEAVY.png" alt="Heavy Hit">
-                        <span>Heavy Hit</span>
-                    </div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/DRAW.png" alt="Draw">
-                        <span>Draw</span>
-                    </div>
-                    <div style="width: 40px;"></div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/UPSET.png" alt="Upset">
-                        <span>Upset</span>
-                    </div>
-                    <div class="smithing-step">
-                        <img class="smithing-step-img" src="./assets/SHRINK.png" alt="Shrink">
-                        <span>Shrink</span>
-                    </div>
+                <div class="selector-container">
+                    <div class="selector-grid"></div>
+                    <div class="row-selectors"></div>
+                </div>
+                <div class="selector-container">
+                    <div class="selector-grid"></div>
+                    <div class="row-selectors"></div>
                 </div>
             </div>
+            <label>
+                Goal:
+                <input type="number" id="goal" min="0" max="160" value="0" style="margin-top: 0.5em">
+            </label>
         </div>
     </div>
-    <div class="result" id="result"></div>
+    <div id="result" style="margin-top: 1em"></div>
+
     <script>
-        // LOGIC
+        // logic
+
         const SMITHING_STEPS = {
             HIT_LIGHT: -3,
             HIT_MEDIUM: -6,
@@ -136,68 +125,112 @@
             UPSET: 13,
             SHRINK: 16
         };
+        const RULE_STEPS = ["HIT", "DRAW", "PUNCH", "BEND", "UPSET", "SHRINK"];
 
         const SMITHING_PRESETS = {
-            SHEET: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            ROD: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            TUYERE: ["BEND_LAST", "BEND_SECOND_LAST"],
-            PICKAXE_HEAD: ["PUNCH_LAST", "BEND_NOT_LAST", "DRAW_NOT_LAST"],
-            SHOVEL_HEAD: ["PUNCH_LAST", "HIT_NOT_LAST"],
-            AXE_HEAD: ["PUNCH_LAST", "HIT_SECOND_LAST", "UPSET_THIRD_LAST"],
-            HOE_HEAD: ["PUNCH_LAST", "HIT_NOT_LAST", "BEND_NOT_LAST"],
-            HAMMER_HEAD: ["PUNCH_LAST", "SHRINK_NOT_LAST"],
-            PROPICK_HEAD: ["PUNCH_LAST", "DRAW_NOT_LAST", "BEND_NOT_LAST"],
-            SAW_BLADE: ["HIT_LAST", "HIT_SECOND_LAST"],
-            SWORD_BLADE: ["HIT_LAST", "BEND_SECOND_LAST", "BEND_THIRD_LAST"],
-            MACE_HEAD: ["HIT_LAST", "SHRINK_NOT_LAST", "BEND_NOT_LAST"],
-            SCYTHE_BLADE: ["HIT_LAST", "DRAW_SECOND_LAST", "BEND_THIRD_LAST"],
-            KNIFE_BLADE: ["HIT_LAST", "DRAW_SECOND_LAST", "DRAW_THIRD_LAST"],
-            JAVELIN_HEAD: ["HIT_LAST", "HIT_SECOND_LAST", "DRAW_THIRD_LAST"],
-            CHISEL_HEAD: ["HIT_LAST", "HIT_NOT_LAST", "DRAW_NOT_LAST"],
-            SHIELD: ["UPSET_LAST", "BEND_SECOND_LAST", "BEND_THIRD_LAST"],
-            FISH_HOOK: ["DRAW_NOT_LAST", "BEND_ANY", "HIT_ANY"],
-            UNFINISHED_HELMET: ["HIT_LAST", "BEND_SECOND_LAST", "BEND_THIRD_LAST"],
-            UNFINISHED_CHESTPLATE: ["HIT_LAST", "HIT_SECOND_LAST", "UPSET_THIRD_LAST"],
-            UNFINISHED_GREAVES: ["BEND_ANY", "DRAW_ANY", "HIT_ANY"],
-            UNFINISHED_BOOTS: ["BEND_LAST", "BEND_SECOND_LAST", "SHRINK_THIRD_LAST"],
-            TRAPDOOR: ["BEND_LAST", "DRAW_SECOND_LAST", "DRAW_THIRD_LAST"],
-            UNFINISHED_LAMP: ["BEND_LAST", "BEND_SECOND_LAST", "DRAW_THIRD_LAST"],
-            CHAIN: ["HIT_ANY", "DRAW_THIRD_LAST"],
-            BARS: ["UPSET_LAST", "PUNCH_SECOND_LAST", "PUNCH_THIRD_LAST"],
-            RAW_IRON_BLOOM: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            REFINED_IRON_BLOOM: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            HIGH_CARBON_STEEL: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            STEEL: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            BLACK_STEEL: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            BLUE_STEEL: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            RED_STEEL: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"],
-            IRON_DOOR: ["HIT_LAST", "DRAW_NOT_LAST", "PUNCH_NOT_LAST"],
-            RED_STEEL_BUCKET: ["HIT_LAST", "BEND_SECOND_LAST", "BEND_THIRD_LAST"],
-            BLUE_STEEL_BUCKET: ["HIT_LAST", "BEND_SECOND_LAST", "BEND_THIRD_LAST"],
-            GRILL: ["PUNCH_LAST", "PUNCH_NOT_LAST", "DRAW_ANY"],
-            BRASS_MECHANISMS: ["PUNCH_LAST", "HIT_SECOND_LAST", "PUNCH_THIRD_LAST"],
-            JAR_LID: ["HIT_LAST", "HIT_SECOND_LAST", "PUNCH_THIRD_LAST"],
-            BLOWPIPE: ["DRAW_LAST", "DRAW_SECOND_LAST", "HIT_THIRD_LAST"],
-            STEEL_PIPE: ["DRAW_LAST", "BEND_NOT_LAST"],
-            TONG_PART: ["HIT_LAST", "DRAW_SECOND_LAST", "BEND_THIRD_LAST"],
-            ALL_HIT: ["HIT_LAST", "HIT_SECOND_LAST", "HIT_THIRD_LAST"]
+            "Sheet": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Rod": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Tuyere": [["BEND", [0]], ["BEND", [1]]],
+            "Pickaxe Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["DRAW", [1, 2]]],
+            "Shovel Head": [["PUNCH", [0]], ["HIT", [1, 2]]],
+            "Axe Head": [["PUNCH", [0]], ["HIT", [1]], ["UPSET", [2]]],
+            "Hoe Head": [["PUNCH", [0]], ["HIT", [1, 2]], ["BEND", [1, 2]]],
+            "Hammer Head": [["PUNCH", [0]], ["SHRINK", [1, 2]]],
+            "Propick Head": [["PUNCH", [0]], ["DRAW", [1, 2]], ["BEND", [1, 2]]],
+            "Saw Blade": [["HIT", [0]], ["HIT", [1]]],
+            "Sword Blade": [["HIT", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Mace Head": [["HIT", [0]], ["SHRINK", [1, 2]], ["BEND", [1, 2]]],
+            "Scythe Blade": [["HIT", [0]], ["DRAW", [1]], ["BEND", [2]]],
+            "Knife Blade": [["HIT", [0]], ["DRAW", [1]], ["DRAW", [2]]],
+            "Javelin Head": [["HIT", [0]], ["HIT", [1]], ["DRAW", [2]]],
+            "Chisel Head": [["HIT", [0]], ["HIT", [1, 2]], ["DRAW", [1, 2]]],
+            "Shield": [["UPSET", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Fish Hook": [["DRAW", [1, 2]], ["BEND", [0, 1, 2]], ["HIT", [0, 1, 2]]],
+            "Unfinished Helmet": [["HIT", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Unfinished Chestplate": [["HIT", [0]], ["HIT", [1]], ["UPSET", [2]]],
+            "Unfinished Greaves": [["BEND", [0, 1, 2]], ["DRAW", [0, 1, 2]], ["HIT", [0, 1, 2]]],
+            "Unfinished Boots": [["BEND", [0]], ["BEND", [1]], ["SHRINK", [2]]],
+            "Trapdoor": [["BEND", [0]], ["DRAW", [1]], ["DRAW", [2]]],
+            "Unfinished Lamp": [["BEND", [0]], ["BEND", [1]], ["DRAW", [2]]],
+            "Chain": [["HIT", [0, 1, 2]], ["DRAW", [2]]],
+            "Bars": [["UPSET", [0]], ["PUNCH", [1]], ["PUNCH", [2]]],
+            "Raw Iron Bloom": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Refined Iron Bloom": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "High Carbon Steel": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Steel": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Black Steel": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Blue Steel": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Red Steel": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Iron Door": [["HIT", [0]], ["DRAW", [1, 2]], ["PUNCH", [1, 2]]],
+            "Red Steel Bucket": [["HIT", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Blue Steel Bucket": [["HIT", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Grill": [["PUNCH", [0]], ["PUNCH", [1, 2]], ["DRAW", [0, 1, 2]]],
+            "Brass Mechanisms": [["PUNCH", [0]], ["HIT", [1]], ["PUNCH", [2]]],
+            "Jar Lid": [["HIT", [0]], ["HIT", [1]], ["PUNCH", [2]]],
+            "Blowpipe": [["DRAW", [0]], ["DRAW", [1]], ["HIT", [2]]],
+            "Steel Pipe": [["DRAW", [0]], ["BEND", [1, 2]]],
+            "Tong Part": [["HIT", [0]], ["DRAW", [1]], ["BEND", [2]]],
+            "ALL-HIT": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
         };
-
-        const REQUIREMENTS = ["HIT", "DRAW", "PUNCH", "BEND", "UPSET", "SHRINK"].flatMap(s => ["ANY", "LAST", "SECOND_LAST", "THIRD_LAST", "NOT_LAST"].map(t => `${s}_${t}`));
-
-        function ruleSatisfied(rule, solution) {
-            const [_, what, when] = rule.match(/^([^_]+)_(.+)$/);
-            const foundAt = solution.map(x => x.includes(what)).reverse();
-
-            return (
-                (when === "ANY" && foundAt.some(Boolean)) ||
-                (when === "LAST" && foundAt[0]) ||
-                (when === "SECOND_LAST" && foundAt[1]) ||
-                (when === "THIRD_LAST" && foundAt[2]) ||
-                (when === "NOT_LAST" && (foundAt[1] || foundAt[2]))
-            );
+        const SMITHING_PRESETS_TFG = {
+            "Iron Door": [["HIT", [0]], ["DRAW", [1, 2]], ["PUNCH", [1, 2]]],
+            "Ingot": [["HIT", [0]], ["DRAW", [1]], ["HIT", [2]]],
+            "Gear": [["HIT", [0]], ["SHRINK", [1]], ["DRAW", [2]]],
+            "Plate": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Unfinished Helmet": [["HIT", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Unfinished Chestplate": [["HIT", [0]], ["HIT", [1]], ["UPSET", [2]]],
+            "Unfinished Greaves": [["BEND", [0, 1, 2]], ["DRAW", [0, 1, 2]], ["HIT", [0, 1, 2]]],
+            "Unfinished Boots": [["BEND", [0]], ["BEND", [1]], ["SHRINK", [2]]],
+            "Tuyere": [["BEND", [0]], ["BEND", [1]]],
+            "Shield": [["UPSET", [0]], ["BEND", [1]], ["BEND", [2]]],
+            "Fish Hook": [["DRAW", [1, 2]], ["BEND", [0, 1, 2]], ["HIT", [0, 1, 2]]],
+            "Sword Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["DRAW", [1, 2]]],
+            "Butchery Knife Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["BEND", [1, 2]]],
+            "Mining Hammer Head": [["PUNCH", [0]], ["SHRINK", [1, 2]]],
+            "Spade Head": [["PUNCH", [0]], ["HIT", [1, 2]]],
+            "Rod": [["BEND", [0]], ["DRAW", [1]], ["DRAW", [2]]],
+            "Bolt": [["PUNCH", [0]], ["DRAW", [1]], ["DRAW", [2]]],
+            "Screw": [["PUNCH", [0]], ["PUNCH", [1]], ["SHRINK", [2]]],
+            "Ring": [["HIT", [0]], ["HIT", [1]], ["HIT", [2]]],
+            "Pickaxe Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["DRAW", [1, 2]]],
+            "Axe Head": [["PUNCH", [0]], ["HIT", [1]], ["UPSET", [2]]],
+            "Shovel Head": [["PUNCH", [0]], ["HIT", [1, 2]]],
+            "Hoe Head": [["PUNCH", [0]], ["HIT", [1, 2]], ["BEND", [1, 2]]],
+            "Hammer Head": [["PUNCH", [0]], ["SHRINK", [1, 2]]],
+            "Saw Head": [["HIT", [0]], ["HIT", [1]]],
+            "Scythe Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["DRAW", [1, 2]]],
+            "File Head": [["UPSET", [0]], ["BEND", [1, 2]], ["PUNCH", [1, 2]]],
+            "Knife Head": [["PUNCH", [0]], ["BEND", [1, 2]], ["DRAW", [1, 2]]],
+            "Metal Trapdoor": [["BEND", [0]], ["DRAW", [1]], ["DRAW", [2]]],
+            "Metal Bars": [["UPSET", [0]], ["PUNCH", [1]], ["PUNCH", [2]]],
+            "Soaked Unrefined Paper": [["HIT", [0]], ["HIT", [0]], ["HIT", [0]]],
+            "Steel Support": [["UPSET", [0]], ["SHRINK", [0, 1, 2]]],
+            "Tree Tap": [["HIT", [0]], ["UPSET", [1]], ["UPSET", [2]]],
+            "Pie Pan": [["HIT", [0]], ["HIT", [1]], ["DRAW", [2]]],
+            "Copper Credits": [["BEND", [0]], ["PUNCH", [1, 2]], ["DRAW", [1, 2]]],
+            "Create Deco: Metal Bars": [["SHRINK", [0]], ["PUNCH", [1]], ["PUNCH", [2]]],
+            "Create Deco: Metal Door": [["DRAW", [0]], ["DRAW", [1]], ["PUNCH", [2]]],
+            "Create Deco: Metal Bars Overlay": [["DRAW", [0]], ["PUNCH", [1]], ["PUNCH", [2]]],
+            "Create Deco: Metal Trapdoor": [["SHRINK", [0]], ["DRAW", [1]], ["DRAW", [2]]],
         }
 
+        /**
+         * Checks whether a solution satisfies a rule
+         * @param {[string, number[]]} rule - single rule such as ["BEND", [0]] meaning bend last
+         * @param {string[]} solution - A solution to the rule segment, must be exactly 3 steps
+         * @returns {boolean}
+         */
+        function ruleSatisfied(rule, solution) {
+            const [what, when] = rule;
+            if (when.length === 0) return solution.some(x => x.includes(what))
+            return when.some(desiredIndex => solution[2 - desiredIndex].includes(what))
+        }
+
+        /**
+         * Gets all possible final options for a list of rules
+         * @param {[string, number[]][]} rules - A list of rules that must be satisfied
+         * @returns {string[][]}
+         */
         function getFinalOptions(rules) {
             const steps = Object.keys(SMITHING_STEPS);
             const results = [];
@@ -215,6 +248,14 @@
             return results;
         }
 
+        /**
+         * Generates all combinations with repetition of a given array.
+         *
+         * @template T
+         * @param {T[]} arr - The array of elements to choose from.
+         * @param {number} size - The size of each combination.
+         * @returns {Generator<T[], void, unknown>}
+         */
         function* combinationsWithRepetition(arr, size) {
             const n = arr.length;
             const indices = Array(size).fill(0);
@@ -235,6 +276,11 @@
         }
 
 
+        /**
+         * Find the optimal paths to a goal without any rules
+         * @param {number} goal - the goal to reach
+         * @return {string[][]}
+         */
         function findOptimalUnconstrained(goal) {
             const stepEntries = Object.entries(SMITHING_STEPS).reverse();
 
@@ -253,7 +299,11 @@
         }
 
 
-
+        /**
+         * Calculate how many changes are in a list of steps to encourage repeating the same command
+         * @param {string[]} solution - list of steps
+         * @return {number}
+         */
         function scoreRepetition(solution) {
             let last = null;
             let changes = 0;
@@ -266,8 +316,13 @@
             return changes;
         }
 
+        /**
+         * Find the most optimal actions to reach a goal. 
+         * @param {number} goal - the goal to reach
+         * @param {[string, number[]][]} rules - rules that must be satisfied for the last three actions
+         * @return {string[][]} array of optimal actions
+         */
         function findOptimal(goal, rules) {
-            const start = Date.now();
             let solutions = [];
 
             for (let final of getFinalOptions(rules)) {
@@ -287,12 +342,58 @@
             let minChanges = Math.min(...solutions.map(scoreRepetition));
             return solutions.filter(s => scoreRepetition(s) <= minChanges);
         }
-    </script>
 
+    </script>
     <script>
-        // UI
+        // populate fields
+        document.querySelectorAll(".selector-grid").forEach(grid => {
+            let selected = null;
+
+            RULE_STEPS.forEach((name) => {
+                const item = document.createElement('div');
+                item.className = 'selector-item';
+                item.tabIndex = 0;
+                item.setAttribute('data-name', name);
+
+                const img = document.createElement('img');
+                img.src = `./assets/${name}.png`;
+                img.alt = name;
+
+                const label = document.createElement('div');
+                label.className = 'selector-label';
+                label.textContent = name.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+                item.appendChild(img);
+                item.appendChild(label);
+
+                item.addEventListener('click', () => {
+                    grid.querySelectorAll('.selector-item').forEach(el => el.classList.remove('selected'));
+                    if (selected === item) {
+                        selected = null;
+                    } else {
+                        item.classList.add('selected');
+                        selected = item;
+                    }
+                });
+
+                grid.appendChild(item);
+            });
+        })
+
+        document.querySelectorAll(".row-selectors").forEach(rowContainer => {
+            for (let i = 0; i < 3; i++) {
+                const row = document.createElement('div');
+                row.className = 'row-selector';
+                row.tabIndex = 0;
+                row.addEventListener('click', () => {
+                    row.classList.toggle('selected');
+                });
+                rowContainer.appendChild(row);
+            }
+        })
 
         const predefinedElement = document.getElementById("predefined-rule");
+        predefinedElement.innerHTML = '<option value=""></option>'
         Object.keys(SMITHING_PRESETS).forEach(key => {
             const o = document.createElement("option");
             o.value = key;
@@ -300,104 +401,97 @@
             predefinedElement.appendChild(o);
         });
 
-        const ruleElements = Array.from(document.getElementsByClassName('rule-select'));
-        ruleElements.forEach(rule => {
-            rule.innerHTML = "";
-            const emptyOpt = document.createElement("option");
-            emptyOpt.value = "";
-            emptyOpt.textContent = "Any";
-            emptyOpt.selected = true;
-            rule.appendChild(emptyOpt);
-            REQUIREMENTS.forEach(opt => {
-                const o = document.createElement("option");
-                o.value = opt;
-                o.textContent = opt.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                rule.appendChild(o);
-            });
-        })
+    </script>
+    <script>
+        // document manipulation
 
-        predefinedElement.addEventListener("change", () => {
-            const val = predefinedElement.value;
-            if (val && SMITHING_PRESETS[val]) {
-                ruleElements.forEach((sel, i) => {
-                    Array.from(sel.options).forEach(opt => {
-                        opt.selected = (opt.value === (SMITHING_PRESETS[val][i] || ""));
-                    });
-                });
-            } else {
-                ruleElements.forEach(sel => {
-                    Array.from(sel.options).forEach(opt => {
-                        opt.selected = (opt.value === "");
-                    });
-                });
-            }
-            updateResult();
-        });
+        function getDefaultSmithingPresets() {
+            if (document.getElementById("predefined-rule-modpack").value == "TFC")
+                return SMITHING_PRESETS
+            else
+                return SMITHING_PRESETS_TFG
+        }
 
-        [...ruleElements, document.getElementById("goal")].forEach(el => el.addEventListener("change", updateResult));
-        document.getElementById("smithing-form").addEventListener("submit", e => e.preventDefault());
+        function getSelectedRules() {
+            return Array.from(document.querySelectorAll(".selector-container"))
+                .map(
+                    element => [
+                        element.querySelector('.selector-item.selected')?.getAttribute("data-name"),
+                        Array.from(element.querySelectorAll(".row-selector")).map((element, i) => element.classList.contains("selected") ? 2 - i : undefined).filter(x => x !== undefined)
+                    ]
+                ).filter(([what, when]) => what !== undefined)
+        }
 
-        const savedPresetsElement = document.getElementById("saved-presets");
+        function getSelectedGoal() {
+            return parseInt(document.getElementById("goal").value)
+        }
+
+        function updateSelectedRules(rules) {
+            console.log("Update selected rules to", rules)
+            Array.from(document.getElementsByClassName("selector-container")).forEach(
+                (containerElement, containerIndex) => {
+                    Array.from(containerElement.getElementsByClassName("selector-item")).forEach(
+                        selectorElement => {
+                            if (selectorElement.getAttribute("data-name") === (rules[containerIndex] || [""])[0])
+                                selectorElement.classList.add("selected");
+                            else
+                                selectorElement.classList.remove("selected");
+                        }
+                    )
+                    Array.from(containerElement.getElementsByClassName("row-selector")).forEach(
+                        (rowElement, rowIndex) => {
+                            if ((rules[containerIndex] || [, []])[1].includes(2 - rowIndex))
+                                rowElement.classList.add("selected");
+                            else
+                                rowElement.classList.remove("selected");
+                        }
+                    )
+                }
+            )
+        }
+
+        function clearSelectedRules() {
+            console.log("Clear selected rules")
+            Array.from(document.getElementsByClassName("selector-container")).forEach(
+                containerElement => {
+                    Array.from(containerElement.getElementsByClassName("selector-item")).forEach(
+                        selectorElement => {
+                            selectorElement.classList.remove("selected");
+                        }
+                    )
+                    Array.from(containerElement.getElementsByClassName("row-selector")).forEach(
+                        rowElement => {
+                            rowElement.classList.remove("selected");
+                        })
+                }
+            )
+        }
+
+        function updateSelectedGoal(goal) {
+            document.getElementById("goal").value = goal;
+        }
+
 
         function refreshSavedPresetsSelector() {
-            savedPresetsElement.innerHTML = `<option value="">-- None --</option>`;
-            (JSON.parse(localStorage.getItem("presets")) || []).forEach((preset, idx) => {
+            savedPresetsSelectorElement = document.getElementById("saved-presets")
+            savedPresetsSelectorElement.innerHTML = `<option value=""></option>`;
+            (JSON.parse(localStorage.getItem("savedpresets")) || []).forEach((preset, idx) => {
                 const opt = document.createElement("option");
                 opt.value = idx;
                 opt.textContent = preset.name;
-                savedPresetsElement.appendChild(opt);
+                savedPresetsSelectorElement.appendChild(opt);
             });
         }
 
-        document.getElementById("save-preset-btn").addEventListener("click", () => {
-            const presets = JSON.parse(localStorage.getItem("presets")) || [];
-
-            const presetNameInput = document.getElementById("preset-name").value.trim();
-            if (presetNameInput || !savedPresetsElement.value) {
-                presets.push({
-                    rules: ruleElements.map(rule => rule.value).filter(Boolean),
-                    goal: parseInt(document.getElementById("goal").value),
-                    name: presetNameInput || `Preset ${Date.now()}`,
-                });
-            } else {
-                const idx = parseInt(savedPresetsElement.value);
-                presets[idx].rules = ruleElements.map(rule => rule.value).filter(Boolean);
-                presets[idx].goal = parseInt(document.getElementById("goal").value);
-            }
-            localStorage.setItem("presets", JSON.stringify(presets));
-
-            refreshSavedPresetsSelector();
-            savedPresetsElement.value = (presets.length - 1).toString();
-            document.getElementById("preset-name").value = "";
-        });
-
-        savedPresetsElement.addEventListener("change", () => {
-            const idx = savedPresetsElement.value;
-            if (!idx) return;
-
-            const presets = JSON.parse(localStorage.getItem("presets")) || [];
-            const preset = presets[parseInt(idx)];
-            if (!preset) return;
-
-            ruleElements.forEach((sel, i) => {
-                Array.from(sel.options).forEach(opt => {
-                    opt.selected = (opt.value === (preset.rules[i] || ""));
-                });
-            });
-
-            document.getElementById("goal").value = preset.goal;
-            updateResult();
-        });
-
-        refreshSavedPresetsSelector();
 
         function updateResult() {
-            const rules = ruleElements.map(ruleElements => ruleElements.value).filter(Boolean);
-            const goal = parseInt(document.getElementById("goal").value);
+            const rules = getSelectedRules();
+            const goal = getSelectedGoal();
             const resultDiv = document.getElementById("result");
             resultDiv.innerHTML = "<em>Calculating...</em>";
             setTimeout(() => {
                 const solutions = findOptimal(goal, rules);
+                console.log("Found", solutions.length, "solutions for goal:", goal, "rules:", rules)
                 if (!solutions.length) {
                     resultDiv.innerHTML = "<strong>No solution found.</strong>";
                     return;
@@ -412,7 +506,93 @@
             }, 10);
         }
 
+        refreshSavedPresetsSelector();
         updateResult();
+    </script>
+    <script>
+        // Listeners
+
+        document.getElementById("predefined-rule-modpack").addEventListener("change", () => {
+            const presets = getDefaultSmithingPresets();
+
+            const predefinedElement = document.getElementById("predefined-rule");
+            predefinedElement.innerHTML = '<option value=""></option>'
+            Object.keys(presets).forEach(key => {
+                const o = document.createElement("option");
+                o.value = key;
+                o.textContent = key.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());;
+                predefinedElement.appendChild(o);
+            });
+        })
+
+        document.getElementById("predefined-rule").addEventListener("change", () => {
+            const val = document.getElementById("predefined-rule").value;
+            const presets = getDefaultSmithingPresets();
+            if (val && presets[val]) {
+                updateSelectedRules(presets[val])
+            } else {
+                clearSelectedRules();
+            }
+            updateResult();
+        });
+
+        document.getElementById("saved-presets").addEventListener("change", () => {
+            const value = document.getElementById("saved-presets").value;
+            const presets = JSON.parse(localStorage.getItem("savedpresets")) || [];
+
+            if (value) {
+                preset = presets[parseInt(value)];
+                updateSelectedRules(preset.rules);
+                updateSelectedGoal(preset.goal);
+            } else {
+                clearSelectedRules();
+                updateSelectedGoal(0);
+            }
+            updateResult();
+        })
+
+        document.getElementById("save-preset-btn").addEventListener("click", () => {
+            savedPresetsSelectorElement = document.getElementById("saved-presets")
+            const presets = JSON.parse(localStorage.getItem("savedpresets")) || [];
+
+            const presetNameInput = document.getElementById("preset-name").value.trim();
+            const idx = savedPresetsSelectorElement.value && parseInt(savedPresetsSelectorElement.value)
+            if (presetNameInput || !savedPresetsSelectorElement.value) {
+                presets.push({
+                    rules: getSelectedRules(),
+                    goal: getSelectedGoal(),
+                    name: presetNameInput || `Preset ${Date.now()}`,
+                });
+            } else {
+                presets[idx].rules = getSelectedRules();
+                presets[idx].goal = getSelectedGoal();
+            }
+            localStorage.setItem("savedpresets", JSON.stringify(presets));
+
+            refreshSavedPresetsSelector();
+            savedPresetsSelectorElement.value = idx || (presets.length - 1).toString();
+            document.getElementById("preset-name").value = "";
+        });
+
+        document.getElementById("delete-preset-btn").addEventListener("click", () => {
+            savedPresetsSelectorElement = document.getElementById("saved-presets")
+            const presets = JSON.parse(localStorage.getItem("savedpresets")) || [];
+
+            const idx = savedPresetsSelectorElement.value;
+            if (!savedPresetsSelectorElement.value) return;
+            presets.splice(parseInt(savedPresetsSelectorElement.value), 1)
+
+            localStorage.setItem("savedpresets", JSON.stringify(presets));
+
+            refreshSavedPresetsSelector();
+            savedPresetsSelectorElement.value = "";
+            document.getElementById("preset-name").value = "";
+        });
+
+
+        document.querySelectorAll('.selector-item').forEach(element => element.addEventListener("click", updateResult))
+        document.querySelectorAll('.row-selector').forEach(element => element.addEventListener("click", updateResult))
+        document.getElementById('goal').addEventListener("change", updateResult)
     </script>
 </body>
 
